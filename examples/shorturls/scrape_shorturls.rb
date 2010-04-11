@@ -71,6 +71,8 @@ Log = Logger.new($stderr) unless defined?(Log)
 #   opt :dest_pattern,   "Pattern for dump file output",                 :default => ":rootdir/:handle_prefix/:handle/:date/:handle+:timestamp-:pid.tsv"
 # end
 handle = Settings.base_url.gsub(/\.com$/,'').gsub(/\W+/,'')
+hostname ||= `hostname`.chomp.gsub(".","_")
+
 
 #
 # ******************** Log ********************
@@ -153,11 +155,11 @@ src_store.each do |bareurl, *args|
   periodic_log.periodically{ ["%7d"%stats.success_tot, 'successes', "%7d"%stats.failure_tot, 'failures', dest_store.size, req.response_code, result, req.url] }
   graphite_sender.periodically do |metrics, iter, since|
     rates = stats.rates_inst
-    metrics << ["scraper.shorturl.#{handle}.success_rate", rates[0]]
-    metrics << ["scraper.shorturl.#{handle}.failure_rate", rates[1]]
-    metrics << ["scraper.shorturl.#{handle}.success_tot_rate", stats.rates_tot[0]]
-    metrics << ["scraper.shorturl.#{handle}.failure_tot_rate", stats.rates_tot[1]]
-    metrics << ["scraper.shorturl.#{handle}.current_file_size", dest_files.size]
+    metrics << ["scraper.#{hostname}.shorturl.#{handle}.success_rate", rates[0]]
+    metrics << ["scraper.#{hostname}.shorturl.#{handle}.failure_rate", rates[1]]
+    metrics << ["scraper.#{hostname}.shorturl.#{handle}.success_tot_rate", stats.rates_tot[0]]
+    metrics << ["scraper.#{hostname}.shorturl.#{handle}.failure_tot_rate", stats.rates_tot[1]]
+    metrics << ["scraper.#{hostname}.shorturl.#{handle}.current_file_size", dest_files.size]
   end
 end
 dest_store.close
