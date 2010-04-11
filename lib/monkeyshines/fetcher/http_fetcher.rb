@@ -82,14 +82,14 @@ module Monkeyshines
         # Response-based sleep time
         sleep_time = 0
         case response
-        when Net::HTTPSuccess             then return          # 2xx
-        when Net::HTTPRedirection         then return          # 3xx
-        when Net::HTTPBadRequest          then sleep_time =  5 # 400 (rate limit, probably)
-        when Net::HTTPUnauthorized        then sleep_time =  0 # 401 (protected user, probably)
-        when Net::HTTPForbidden           then sleep_time =  4 # 403 update limit
-        when Net::HTTPNotFound            then sleep_time =  0 # 404 deleted
-        when Net::HTTPServiceUnavailable  then sleep_time =  5 # 503 Fail Whale
-        when Net::HTTPServerError         then sleep_time =  2 # 5xx All other server errors
+        when Net::HTTPSuccess             then return           # 2xx
+        when Net::HTTPRedirection         then return           # 3xx
+        when Net::HTTPBadRequest          then sleep_time =  10 # 400 (rate limit, probably)
+        when Net::HTTPUnauthorized        then sleep_time =  30 # 401 (protected user, probably)
+        when Net::HTTPForbidden           then sleep_time =  30 # 403 update limit
+        when Net::HTTPNotFound            then sleep_time =  10 # 404 deleted
+        when Net::HTTPServiceUnavailable  then sleep_time =  5  # 503 Fail Whale
+        when Net::HTTPServerError         then sleep_time =  2  # 5xx All other server errors
         else                              sleep_time = 1
         end
         sleep_time += response['retry-after'].to_i rescue 0
