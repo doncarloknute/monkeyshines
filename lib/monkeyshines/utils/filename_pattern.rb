@@ -75,7 +75,7 @@ module Monkeyshines
 
       # Memoized: the hostname for the machine running this script.
       def hostname
-        @hostname ||= ENV['HOSTNAME'] || `hostname`
+        @hostname ||= ENV['HOSTNAME'] || `hostname`.delete("\n")
       end
       # Memoized: the Process ID for this invocation.
       def pid
