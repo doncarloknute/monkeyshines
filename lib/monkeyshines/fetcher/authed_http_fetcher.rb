@@ -6,7 +6,7 @@ module Monkeyshines
 
     #
     class AuthedHttpFetcher < HttpFetcher
-      attr_accessor :auth_params, :oauth_token, :oauth_secret, :consumer_key, :consumer_secret
+      attr_accessor :auth_params, :oauth_token, :oauth_secret, :consumer_key, :consumer_secret, :site, :authorize_path
       # 
       # All the stuff below was copied from http://github.com/moomerman/twitter_oauth in the client.rb file
       # 
@@ -90,12 +90,16 @@ module Monkeyshines
         self.oauth_secret = options[:oauth_token_secret]
         self.consumer_key = options[:consumer_key]
         self.consumer_secret = options[:consumer_secret]
+        self.site = options[:site]
+        self.authorize_path = options[:authorize_path]
       end
 
-      def get_request_token
+      def request_token(options={})
+        consumer.options[:authorize_path] = @authorize_path
+        consumer.get_request_token(options)
       end
 
-      def authorize
+      def authorize(token, secret, options = {})
         request_token = OAuth::RequestToken.new(
           consumer, token, secret
         )
@@ -120,7 +124,7 @@ module Monkeyshines
         @consumer ||= OAuth::Consumer.new(
           @consumer_key,
           @consumer_secret,
-          { :site => "http://api.twitter.com" }
+          { :site => @site }
         )
       end
     
